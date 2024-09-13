@@ -44,9 +44,18 @@ public class StringCalculator
     {
         if (string.IsNullOrEmpty(numbers)) return 0;
 
-        numbers = numbers.Replace("\n", ",");
+        string delimiter = ",";
 
-        var splitNumbers = numbers.Split(new[] { ',' }, StringSplitOptions.None);
+        if (numbers.StartsWith("//"))
+        {
+            int delimiterEndIndex = numbers.IndexOf("\n");
+            delimiter = numbers.Substring(2, delimiterEndIndex - 2);
+            numbers = numbers.Substring(delimiterEndIndex + 1); 
+        }
+
+        numbers = numbers.Replace("\n", delimiter);
+
+        var splitNumbers = numbers.Split(new[] { delimiter }, StringSplitOptions.None);
 
         List<int> parsedNumbers = splitNumbers.Select(n => int.TryParse(n, out int result) ? result : 0).ToList();
 
@@ -57,7 +66,6 @@ public class StringCalculator
             throw new ArgumentException($"Negatives not allowed: {string.Join(", ", negativeNumbers)}");
         }
 
-        // Ignore any numbers greater than 1000
         parsedNumbers = parsedNumbers.Where(n => n <= 1000).ToList();
 
         return parsedNumbers.Sum();
