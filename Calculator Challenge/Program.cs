@@ -57,6 +57,9 @@ public class StringCalculator
             throw new ArgumentException($"Negatives not allowed: {string.Join(", ", negativeNumbers)}");
         }
 
+        // Ignore any numbers greater than 1000
+        parsedNumbers = parsedNumbers.Where(n => n <= 1000).ToList();
+
         return parsedNumbers.Sum();
     }
 }
