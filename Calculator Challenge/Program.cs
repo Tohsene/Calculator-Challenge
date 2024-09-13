@@ -29,12 +29,10 @@ public class StringCalculator
     {
         if (string.IsNullOrEmpty(numbers)) return 0;
 
-        var splitNumbers = numbers.Split(new[] { ',', '\n' }, StringSplitOptions.None);
-        if (splitNumbers.Length > 2)
-            throw new ArgumentException("More than two numbers provided");
-
+        var splitNumbers = numbers.Split(',');
         return splitNumbers.Sum(n => int.TryParse(n, out int result) ? result : 0);
     }
+
 }
 
 
