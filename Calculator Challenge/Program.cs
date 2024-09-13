@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 var calculator = new StringCalculator();
 
@@ -23,16 +24,31 @@ while (true)
     }
 }
 
+//public class StringCalculator
+//{
+//    public int Add(string numbers)
+//    {
+//        if (string.IsNullOrEmpty(numbers)) return 0;
+
+//        // Split on both commas and newline characters
+//        var splitNumbers = numbers.Split(new[] { ',', '\n' }, StringSplitOptions.None);
+
+//        // Convert and sum valid numbers
+//        return splitNumbers.Sum(n => int.TryParse(n, out int result) ? result : 0);
+//    }
+
+//}
 public class StringCalculator
 {
     public int Add(string numbers)
     {
         if (string.IsNullOrEmpty(numbers)) return 0;
 
-        var splitNumbers = numbers.Split(',');
+        numbers = numbers.Replace("\n", ",");
+        var splitNumbers = numbers.Split(new[] { ',' }, StringSplitOptions.None);
+
         return splitNumbers.Sum(n => int.TryParse(n, out int result) ? result : 0);
     }
-
 }
 
 
