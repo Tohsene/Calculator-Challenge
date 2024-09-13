@@ -45,9 +45,19 @@ public class StringCalculator
         if (string.IsNullOrEmpty(numbers)) return 0;
 
         numbers = numbers.Replace("\n", ",");
+
         var splitNumbers = numbers.Split(new[] { ',' }, StringSplitOptions.None);
 
-        return splitNumbers.Sum(n => int.TryParse(n, out int result) ? result : 0);
+        List<int> parsedNumbers = splitNumbers.Select(n => int.TryParse(n, out int result) ? result : 0).ToList();
+
+        var negativeNumbers = parsedNumbers.Where(n => n < 0).ToList();
+
+        if (negativeNumbers.Any())
+        {
+            throw new ArgumentException($"Negatives not allowed: {string.Join(", ", negativeNumbers)}");
+        }
+
+        return parsedNumbers.Sum();
     }
 }
 
