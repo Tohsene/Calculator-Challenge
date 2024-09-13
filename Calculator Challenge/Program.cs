@@ -44,18 +44,19 @@ public class StringCalculator
     {
         if (string.IsNullOrEmpty(numbers)) return 0;
 
-        string delimiter = ",";  
-        List<string> delimiters = new List<string> { delimiter };  
+        List<string> delimiters = new List<string> { "," };  
 
         if (numbers.StartsWith("//"))
         {
             int delimiterEndIndex = numbers.IndexOf("\n");
             string delimiterSection = numbers.Substring(2, delimiterEndIndex - 2);
 
-            if (delimiterSection.StartsWith("[") && delimiterSection.EndsWith("]"))
+            if (delimiterSection.Contains("[") && delimiterSection.Contains("]"))
             {
-                delimiterSection = delimiterSection.Trim('[', ']');
-                delimiters = new List<string> { delimiterSection };
+                var delimiterMatches = delimiterSection.Split(new[] { "][" }, StringSplitOptions.None);
+                delimiters = delimiterMatches
+                    .Select(d => d.Trim('[', ']'))  
+                    .ToList();
             }
             else
             {
@@ -65,10 +66,7 @@ public class StringCalculator
             numbers = numbers.Substring(delimiterEndIndex + 1);
         }
 
-        foreach (var del in delimiters)
-        {
-            numbers = numbers.Replace("\n", del);
-        }
+        numbers = numbers.Replace("\n", delimiters[0]);
 
         var splitNumbers = numbers.Split(delimiters.ToArray(), StringSplitOptions.None);
 
