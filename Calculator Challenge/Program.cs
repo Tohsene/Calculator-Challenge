@@ -44,18 +44,33 @@ public class StringCalculator
     {
         if (string.IsNullOrEmpty(numbers)) return 0;
 
-        string delimiter = ",";
+        string delimiter = ",";  
+        List<string> delimiters = new List<string> { delimiter };  
 
         if (numbers.StartsWith("//"))
         {
             int delimiterEndIndex = numbers.IndexOf("\n");
-            delimiter = numbers.Substring(2, delimiterEndIndex - 2);
-            numbers = numbers.Substring(delimiterEndIndex + 1); 
+            string delimiterSection = numbers.Substring(2, delimiterEndIndex - 2);
+
+            if (delimiterSection.StartsWith("[") && delimiterSection.EndsWith("]"))
+            {
+                delimiterSection = delimiterSection.Trim('[', ']');
+                delimiters = new List<string> { delimiterSection };
+            }
+            else
+            {
+                delimiters = new List<string> { delimiterSection };
+            }
+
+            numbers = numbers.Substring(delimiterEndIndex + 1);
         }
 
-        numbers = numbers.Replace("\n", delimiter);
+        foreach (var del in delimiters)
+        {
+            numbers = numbers.Replace("\n", del);
+        }
 
-        var splitNumbers = numbers.Split(new[] { delimiter }, StringSplitOptions.None);
+        var splitNumbers = numbers.Split(delimiters.ToArray(), StringSplitOptions.None);
 
         List<int> parsedNumbers = splitNumbers.Select(n => int.TryParse(n, out int result) ? result : 0).ToList();
 
