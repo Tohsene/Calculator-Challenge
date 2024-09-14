@@ -1,31 +1,13 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-var calculator = new StringCalculator();
+var serviceCollection = new ServiceCollection();
+serviceCollection.AddSingleton<ICalculator, StringCalculator>();
 
-string delimiter = ",";
-bool allowNegatives = false;
-int upperBound = 1000;
-
-if (args.Length > 0)
-{
-    foreach (string arg in args)
-    {
-        if (arg.StartsWith("--delimiter="))
-        {
-            delimiter = arg.Split('=')[1];
-        }
-        else if (arg == "--allow-negatives")
-        {
-            allowNegatives = true;
-        }
-        else if (arg.StartsWith("--upper-bound="))
-        {
-            upperBound = int.Parse(arg.Split('=')[1]);
-        }
-    }
-}
+var serviceProvider = serviceCollection.BuildServiceProvider();
+var calculator = serviceProvider.GetService<ICalculator>();
 
 while (true)
 {
@@ -33,7 +15,7 @@ while (true)
     {
         Console.Write("Enter numbers: ");
         string input = Console.ReadLine();
-        int result = calculator.Add(input, delimiter, allowNegatives, upperBound);
+        int result = calculator.Add(input);
         Console.WriteLine($"Result: {result}");
     }
     catch (Exception ex)
@@ -41,9 +23,12 @@ while (true)
         Console.WriteLine($"Error: {ex.Message}");
     }
 }
+public interface ICalculator
+{
+    int Add(string numbers, string delimiter = ",", bool allowNegatives = false, int upperBound = 1000);
+}
 
-
-public class StringCalculator
+public class StringCalculator : ICalculator
 {
     public int Add(string numbers, string delimiter = ",", bool allowNegatives = false, int upperBound = 1000)
     {
@@ -89,8 +74,7 @@ public class StringCalculator
 
         return parsedNumbers.Sum();
     }
-
-
 }
+
 
 
